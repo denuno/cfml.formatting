@@ -1,3 +1,6 @@
+<cfif>
+	wee
+</cfif>
 <cfmail to="some" from="wee" subject="balls">
 	asdfasdf
 asdfasdf
@@ -6,4 +9,4 @@ asdfasdf	asdfasdf
 		asdfasdf
 				asdfasdf
 				sdfsdf
-</cfmail>
+	</cfmail>

@@ -15,5 +15,6 @@ public class FormatterPreferenceConstants {
 	public static final String FORMATTER_CHANGE_TAG_CASE = "formatter_change_tag_case";
 	public static final String FORMATTER_CHANGE_TAG_CASE_UPPER = "formatter_change_tag_case_upper";
 	public static final String FORMATTER_CHANGE_TAG_CASE_LOWER = "formatter_change_tag_case_lower";
+	public static final String FORMATTER_INITIAL_INDENT = "formatter_initial_indent";
 
 }
