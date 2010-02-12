@@ -16,6 +16,7 @@ public class LineTrimmer {
 
 	public LineTrimmer() {
 	}
+
 	/*
 	 * 
 	 * HERE LIES LINE TRIMMING STUPHS
