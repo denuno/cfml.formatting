@@ -1,4 +1,5 @@
-			<cfm to="some" from="wee" subject="balls"ls">
+<cfif>wee</cfif>
+			<cfmail to="some" from="wee" subject="balls">
 	asdfasdf
 asdfasdf
 asdfasdf	asdfasdf
