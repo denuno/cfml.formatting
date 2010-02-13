@@ -19,6 +19,7 @@ public class FormatterPreferences {
 		public static final String FORMATTER_CHANGE_TAG_CASE = "false";
 		public static final String FORMATTER_CHANGE_TAG_CASE_UPPER = "true";
 		public static final String FORMATTER_CHANGE_TAG_CASE_LOWER = "false";
+		public static final String FORMATTER_INITIAL_INDENT = "";
 	}
 
 	Properties fPrefs;
@@ -125,7 +126,7 @@ public class FormatterPreferences {
 	}
 
 	public String getInitialIndent() {
-		return fPrefs.getProperty(FormatterPreferenceConstants.FORMATTER_INITIAL_INDENT);
+		return fPrefs.getProperty(FormatterPreferenceConstants.FORMATTER_INITIAL_INDENT,defaults.FORMATTER_INITIAL_INDENT);
 	}
 
 	public boolean useSpacesInsteadOfTabs() {
