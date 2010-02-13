@@ -1,0 +1,12 @@
+<cfif>
+	wee
+</cfif>
+<cfmail to="some" from="wee" subject="balls">
+	asdfasdf
+asdfasdf
+asdfasdf	asdfasdf
+	asdf		asdfasdf
+		asdfasdf
+				asdfasdf
+				sdfsdf
+	</cfmail>
