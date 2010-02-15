@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -28,6 +29,7 @@ import cfml.parsing.cfmentat.tag.GenericStartTagTypeCf;
 public class Formatter {
 
 	private static final String lineSeparator = System.getProperty("line.separator");
+	private static final String[] fCloseTagList = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow".split(",");
 	private static String fCurrentIndent;
 	private static int MAX_LENGTH = 0;
 	private static int col;
@@ -88,17 +90,10 @@ public class Formatter {
 		String results = sourceFormatter.toString();
 		
 		Source formattedSource = new Source(results);
-		OutputDocument outputDocument = new OutputDocument(formattedSource);
-		//formattedSource.fullSequentialParse();
-		// unformatTags(CFMLTagTypes.CFML_SAVECONTENT,source,formattedSource,outputDocument);
+		results = unformatTagTypes("cfmail,cfquery".split(","),source,formattedSource);
 		if (prefs.getCloseTags()) {
-			String[] closeTagList = "<cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow".split(",");
-			for(int x = 0; x < closeTagList.length; x++) {
-				closeTags(closeTagList[x].trim(), formattedSource, outputDocument);	
-			}
+			results = closeTagTypes(fCloseTagList,results);
 		}
-		unformatTags(CFMLTagTypes.CFML_MAIL, source, formattedSource, outputDocument);
-		results = outputDocument.toString();
 		if (changeTagCase) {
 			if (changeTagCaseLower) {
 				results = changeTagCase(results, false);
@@ -131,46 +126,69 @@ public class Formatter {
 	}
 
 
-	public void unformatTags(StartTagType startTagType, Source source, Source formattedSource,
-			OutputDocument outputDocument) {
-		List oldCfmailStartTags = source.getAllStartTags(startTagType);
-		List newCfmailStartTags = formattedSource.getAllStartTags(startTagType);
+	private String unformatTagTypes(String[] tagStartTypes, Source source, Source formattedSource) {
+		List oldCfmailStartTags = source.getAllStartTags();
+		List newCfmailStartTags = formattedSource.getAllStartTags();
+		OutputDocument outputDocument = new OutputDocument(formattedSource);
 		int curTag = 0;
-		for (Iterator i = newCfmailStartTags.iterator(); i.hasNext();) {
-			StartTag hyperlinkStartTag = (StartTag) i.next();
-			outputDocument.replace(((Tag) hyperlinkStartTag).getElement(), ((Tag) oldCfmailStartTags.get(curTag))
-					.getElement());
+		for (Iterator i = oldCfmailStartTags.iterator(); i.hasNext();) {
+			StartTag tagStart = (StartTag) i.next();
+			if(Arrays.asList(tagStartTypes).contains(tagStart.getName())) {
+				outputDocument.replace(((Tag) tagStart).getElement(), ((Tag) oldCfmailStartTags.get(curTag))
+						.getElement());
+			}
 			curTag++;
 		}
-	}
-
-	private void closeTags(String startTagType, Source source,OutputDocument outputDocument) {		
-		List startTags = source.getAllStartTags(startTagType);		
-		closeTags(startTags, outputDocument);
-	}
-	public void closeTags(StartTagType startTagType, Source source,
-			OutputDocument outputDocument) {
-		List startTags = source.getAllStartTags(startTagType);
-		closeTags(startTags, outputDocument);
-	}
-	public void closeTags(List startTags,
-			OutputDocument outputDocument) {
-		for (Iterator i = startTags.iterator(); i.hasNext();) {
-			StartTag hyperlinkStartTag = (StartTag) i.next();
-			if(hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != '/'){
-				if(hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != ' ') {					
-					outputDocument.insert(hyperlinkStartTag.getEnd()-1," /");	
+		return outputDocument.toString();
+	}	
+	
+	
+	private String closeTagType(String tagStartType, String content) {
+		Source source = new Source(content);
+		List<StartTag> allTags = source.getAllStartTags();
+		OutputDocument outputDocument = new OutputDocument(source);
+		for (Iterator i = allTags.iterator(); i.hasNext();) {
+			StartTag tagStart = (StartTag) i.next();
+			if(tagStart.getName().equals(tagStartType)) {
+				if(tagStart.charAt(tagStart.length() - 2) != '/'){
+					if(tagStart.charAt(tagStart.length() - 2) != ' ') {					
+						outputDocument.insert(tagStart.getEnd()-1," /");	
+					} else {
+						outputDocument.insert(tagStart.getEnd()-1,"/");						
+					}
 				} else {
-					outputDocument.insert(hyperlinkStartTag.getEnd()-1,"/");						
-				}
-			} else {
-				if(hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != ' ') {					
-					outputDocument.insert(hyperlinkStartTag.getEnd()-2," ");	
+					if(tagStart.charAt(tagStart.length() - 2) != ' ') {					
+						outputDocument.insert(tagStart.getEnd()-2," ");	
+					}				
 				}				
 			}
 		}
+		return outputDocument.toString();
 	}
 
+	private String closeTagTypes(String[] tagStartTypes, String content) {
+		Source source = new Source(content);
+		List<StartTag> allTags = source.getAllStartTags();
+		OutputDocument outputDocument = new OutputDocument(source);
+		for (Iterator i = allTags.iterator(); i.hasNext();) {
+			StartTag tagStart = (StartTag) i.next();
+			if(Arrays.asList(tagStartTypes).contains(tagStart.getName())) {
+				if(tagStart.charAt(tagStart.length() - 2) != '/'){
+					if(tagStart.charAt(tagStart.length() - 2) != ' ') {					
+						outputDocument.insert(tagStart.getEnd()-1," /");	
+					} else {
+						outputDocument.insert(tagStart.getEnd()-1,"/");						
+					}
+				} else {
+					if(tagStart.charAt(tagStart.length() - 2) != ' ') {					
+						outputDocument.insert(tagStart.getEnd()-2," ");	
+					}				
+				}				
+			}
+		}
+		return outputDocument.toString();
+	}
+	
 	public String changeTagCase(String contents, boolean uppercase) {
 		Source source = new Source(contents);
 		source.fullSequentialParse();

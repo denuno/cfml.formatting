@@ -5,6 +5,6 @@
 	,"third"
 	--->
 	,{field1 = "val2"}
-	]>
-<cfset bob="fun"/>
-<cfset woo="hoo">
+	] />
+<cfset bob="fun" />
+<cfset woo="hoo" />
