@@ -43,12 +43,12 @@ public class Formatter {
 		String newLine = lineSeparator;
 		CFMLTagTypes.register();
 		Source source = new Source(contents.replaceAll("\\r?\\n", newLine));
-		System.err.println("Before:" + source.getAllElements(CFMLTagTypes.CFML_MAIL).size());
 		// this won't do anything if collapse whitespace is on!
 		// source.ignoreWhenParsing(source.getAllElements(HTMLElementName.SCRIPT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SAVECONTENT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SCRIPT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_MAIL));
+		source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_COMMENT));
 
 		List<Element> elementList = source.getAllElements();
 		for (Element element : elementList) {
@@ -90,6 +90,7 @@ public class Formatter {
 		Source formattedSource = new Source(results);
 		OutputDocument outputDocument = new OutputDocument(formattedSource);
 		unformatTags(CFMLTagTypes.CFML_MAIL, source, formattedSource, outputDocument);
+		closeTags(CFMLTagTypes.CFML_SET, source, formattedSource, outputDocument);
 		// unformatTags(CFMLTagTypes.CFML_SAVECONTENT,source,formattedSource,outputDocument);
 		results = outputDocument.toString();
 		if (changeTagCase) {
@@ -103,7 +104,6 @@ public class Formatter {
 			results = results.replaceAll("(?si)<(cfabort?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
 			results = results.replaceAll("(?si)<(cfargument?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
 			results = results.replaceAll("(?si)<(cfreturn?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
-			results = results.replaceAll("(?si)<(cfset?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
 			results = results.replaceAll("(?si)<(cfinput?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
 			results = results.replaceAll("(?si)<(cfimport?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
 			results = results.replaceAll("(?si)<(cfdump?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
@@ -142,6 +142,28 @@ public class Formatter {
 			StartTag hyperlinkStartTag = (StartTag) i.next();
 			outputDocument.replace(((Tag) hyperlinkStartTag).getElement(), ((Tag) oldCfmailStartTags.get(curTag))
 					.getElement());
+			curTag++;
+		}
+	}
+
+	public void closeTags(StartTagType startTagType, Source source, Source formattedSource,
+			OutputDocument outputDocument) {
+		List oldCfmailStartTags = source.getAllStartTags(startTagType);
+		List newCfmailStartTags = formattedSource.getAllStartTags(startTagType);
+		int curTag = 0;
+		for (Iterator i = newCfmailStartTags.iterator(); i.hasNext();) {
+			StartTag hyperlinkStartTag = (StartTag) i.next();
+			if(hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != '/'){
+				if(hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != ' ') {					
+					outputDocument.insert(hyperlinkStartTag.getEnd()-1," /");	
+				} else {
+					outputDocument.insert(hyperlinkStartTag.getEnd()-1,"/");						
+				}
+			} else {
+				if(hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != ' ') {					
+					outputDocument.insert(hyperlinkStartTag.getEnd()-2," ");	
+				}				
+			}
 			curTag++;
 		}
 	}

@@ -24,6 +24,10 @@ public class TestIgnoredTags extends FormattingTestCase {
 		preformatted = results[0];
 		formatted = results[1];
 		assertEquals(formatted, preformatted);
+		results = formatFile("test/data/formatting/comment_in_set");
+		preformatted = results[0];
+		formatted = results[1];
+		assertEquals(formatted, preformatted);
 	}
 
 }

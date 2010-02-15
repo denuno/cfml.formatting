@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="MacRoman"?>
 <jardesc>
-<jar path="org.cfeclipse.cfml/lib/cfml.jar"/>
+<jar path="org.cfeclipse.cfml/lib/cfml.formatting.jar"/>
 <options buildIfNeeded="true" compress="true" descriptionLocation="/cfml.formatting/jardesc.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
 <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
 <selectedProjects/>
@@ -11,11 +11,8 @@
 </sealing>
 </manifest>
 <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-<javaElement handleIdentifier="=cfml.parsing/src"/>
-<folder path="/cfml.formatting/lib"/>
-<file path="/cfml.formatting/.project"/>
 <javaElement handleIdentifier="=cfml.formatting/src"/>
+<file path="/cfml.formatting/.project"/>
 <file path="/cfml.formatting/.classpath"/>
-<folder path="/cfml.parsing/lib"/>
 </selectedElements>
 </jardesc>
