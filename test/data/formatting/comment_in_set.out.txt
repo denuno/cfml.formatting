@@ -1,0 +1,10 @@
+<cfset thisTest = [
+	"first"
+	<!---
+	,"second"
+	,"third"
+	--->
+	,{field1 = "val2"}
+	] />
+<cfset bob="fun" />
+<cfset woo="hoo" />
