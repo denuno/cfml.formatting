@@ -14,9 +14,9 @@ import cfml.formatting.preferences.FormatterPreferences;
 import junit.framework.TestCase;
 
 public class TestIgnoredTags extends FormattingTestCase {
-
+	
 	private Formatter fFormatter;
-
+	
 	public void testFormat() {
 		String formatted, preformatted;
 		String[] results;
@@ -29,5 +29,5 @@ public class TestIgnoredTags extends FormattingTestCase {
 		formatted = results[1];
 		assertEquals(formatted, preformatted);
 	}
-
+	
 }

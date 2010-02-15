@@ -92,7 +92,7 @@ public class Formatter {
 		//formattedSource.fullSequentialParse();
 		// unformatTags(CFMLTagTypes.CFML_SAVECONTENT,source,formattedSource,outputDocument);
 		if (prefs.getCloseTags()) {
-			String[] closeTagList = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow".split(",");
+			String[] closeTagList = "<cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow".split(",");
 			for(int x = 0; x < closeTagList.length; x++) {
 				closeTags(closeTagList[x].trim(), formattedSource, outputDocument);	
 			}
