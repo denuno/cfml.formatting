@@ -13,10 +13,10 @@ public class LineTrimmer {
 	private static String fCurrentIndent;
 	private static int MAX_LENGTH = 0;
 	private static int col;
-
+	
 	public LineTrimmer() {
 	}
-
+	
 	/*
 	 * 
 	 * HERE LIES LINE TRIMMING STUPHS
@@ -84,12 +84,12 @@ public class LineTrimmer {
 			if (col == 0)
 				indented.append(fCurrentIndent);
 			col = 0;
-
+			
 		}
 		// indented.setLength(indented.lastIndexOf(newLine));
 		return indented.toString();
 	}
-
+	
 	private static void formatTag(Tag tag, String line, StringBuffer indented) {
 		if (tag.length() <= MAX_LENGTH || tag instanceof EndTag) {
 			print(fCurrentIndent + tag, indented);
@@ -108,11 +108,11 @@ public class LineTrimmer {
 			print(startTag, indented);
 		}
 	}
-
+	
 	private static void print(CharSequence text, StringBuffer indented) {
 		print(text, true, indented);
 	}
-
+	
 	private static void print(CharSequence text, boolean splitLongText, StringBuffer indented) {
 		if (splitLongText && text.length() > MAX_LENGTH) {
 			String[] words = text.toString().split("\\s");
@@ -132,5 +132,5 @@ public class LineTrimmer {
 		indented.append(text);
 		col += text.length();
 	}
-
+	
 }

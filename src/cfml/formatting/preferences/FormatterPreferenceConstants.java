@@ -1,7 +1,7 @@
 package cfml.formatting.preferences;
 
 public class FormatterPreferenceConstants {
-
+	
 	public static final String FORMATTER_WRAP_LONG = "formatter_wrap_long";
 	public static final String FORMATTER_CLOSE_TAGS = "formatter_close_tags";
 	public static final String FORMATTER_FORMAT_SQL = "formatter_format_sql";
@@ -16,5 +16,5 @@ public class FormatterPreferenceConstants {
 	public static final String FORMATTER_CHANGE_TAG_CASE_UPPER = "formatter_change_tag_case_upper";
 	public static final String FORMATTER_CHANGE_TAG_CASE_LOWER = "formatter_change_tag_case_lower";
 	public static final String FORMATTER_INITIAL_INDENT = "formatter_initial_indent";
-
+	
 }

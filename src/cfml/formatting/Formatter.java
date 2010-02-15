@@ -26,18 +26,18 @@ import cfml.parsing.cfmentat.tag.CFMLTagTypes;
 import cfml.parsing.cfmentat.tag.GenericStartTagTypeCf;
 
 public class Formatter {
-
+	
 	private static final String lineSeparator = System.getProperty("line.separator");
 	private static String fCurrentIndent;
 	private static int MAX_LENGTH = 0;
 	private static int col;
 	FormatterPreferences fPrefs;
 	LineTrimmer lineTrimmer = new LineTrimmer();
-
+	
 	public Formatter(FormatterPreferences prefs) {
 		fPrefs = prefs;
 	}
-
+	
 	public String format(String contents, FormatterPreferences prefs) {
 		String indentation = prefs.getCanonicalIndent();
 		String newLine = lineSeparator;
@@ -49,7 +49,7 @@ public class Formatter {
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SCRIPT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_MAIL));
 		source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_COMMENT));
-
+		
 		List<Element> elementList = source.getAllElements();
 		for (Element element : elementList) {
 			System.out.println("-------------------------------------------------------------------------------");
@@ -59,7 +59,7 @@ public class Formatter {
 			System.out.println("Source text with content:\n" + element);
 		}
 		System.out.println(source.getCacheDebugInfo());
-
+		
 		boolean enforceMaxLineWidth = prefs.getEnforceMaximumLineWidth();
 		boolean tidyTags = prefs.tidyTags();
 		boolean collapseWhitespace = prefs.collapseWhiteSpace();
@@ -69,16 +69,16 @@ public class Formatter {
 		boolean changeTagCaseLower = prefs.changeTagCaseLower();
 		int maxLineWidth = prefs.getMaximumLineWidth();
 		String currentIndent = prefs.getInitialIndent();
-
+		
 		// displaySegments(source.getAllElements(HTMLElementName.SCRIPT));
 		// source.fullSequentialParse();
-
+		
 		// java 5 req?
 		// System.out.println("Unregistered start tags:");
 		// displaySegments(source.getAllTags(StartTagType.UNREGISTERED));
 		// System.out.println("Unregistered end tags:");
 		// displaySegments(source.getAllTags(EndTagType.UNREGISTERED));
-
+		
 		SourceFormatter sourceFormatter = source.getSourceFormatter();
 		sourceFormatter.setIndentString(indentation);
 		sourceFormatter.setTidyTags(tidyTags);
@@ -86,7 +86,7 @@ public class Formatter {
 		sourceFormatter.setCollapseWhiteSpace(collapseWhitespace);
 		sourceFormatter.setNewLine(newLine);
 		String results = sourceFormatter.toString();
-
+		
 		Source formattedSource = new Source(results);
 		OutputDocument outputDocument = new OutputDocument(formattedSource);
 		unformatTags(CFMLTagTypes.CFML_MAIL, source, formattedSource, outputDocument);
@@ -132,7 +132,7 @@ public class Formatter {
 			return lineTrimmer.formatLineLength(indented.toString(), maxLineWidth, fPrefs.getCanonicalIndent());
 		}
 	}
-
+	
 	public void unformatTags(StartTagType startTagType, Source source, Source formattedSource,
 			OutputDocument outputDocument) {
 		List oldCfmailStartTags = source.getAllStartTags(startTagType);
@@ -145,7 +145,7 @@ public class Formatter {
 			curTag++;
 		}
 	}
-
+	
 	public void closeTags(StartTagType startTagType, Source source, Source formattedSource,
 			OutputDocument outputDocument) {
 		List oldCfmailStartTags = source.getAllStartTags(startTagType);
@@ -153,21 +153,21 @@ public class Formatter {
 		int curTag = 0;
 		for (Iterator i = newCfmailStartTags.iterator(); i.hasNext();) {
 			StartTag hyperlinkStartTag = (StartTag) i.next();
-			if(hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != '/'){
-				if(hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != ' ') {					
-					outputDocument.insert(hyperlinkStartTag.getEnd()-1," /");	
+			if (hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != '/') {
+				if (hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != ' ') {
+					outputDocument.insert(hyperlinkStartTag.getEnd() - 1, " /");
 				} else {
-					outputDocument.insert(hyperlinkStartTag.getEnd()-1,"/");						
+					outputDocument.insert(hyperlinkStartTag.getEnd() - 1, "/");
 				}
 			} else {
-				if(hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != ' ') {					
-					outputDocument.insert(hyperlinkStartTag.getEnd()-2," ");	
-				}				
+				if (hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != ' ') {
+					outputDocument.insert(hyperlinkStartTag.getEnd() - 2, " ");
+				}
 			}
 			curTag++;
 		}
 	}
-
+	
 	public String changeTagCase(String contents, boolean uppercase) {
 		Source source = new Source(contents);
 		source.fullSequentialParse();
@@ -202,11 +202,11 @@ public class Formatter {
 		}
 		return outputDocument.toString();
 	}
-
+	
 	public String format(String string) {
 		return format(string, fPrefs);
 	}
-
+	
 	public String format(URL testFileURL) {
 		try {
 			return format(testFileURL.getContent().toString(), fPrefs);
@@ -215,7 +215,7 @@ public class Formatter {
 		}
 		return "FILE NOT FOUND";
 	}
-
+	
 	public String format(InputStream inStream) {
 		try {
 			return format(convertStreamToString(inStream), fPrefs);
@@ -224,12 +224,12 @@ public class Formatter {
 		}
 		return "FILE NOT FOUND";
 	}
-
+	
 	public String convertStreamToString(InputStream is) throws IOException {
 		if (is != null) {
 			StringBuilder sb = new StringBuilder();
 			String line;
-
+			
 			try {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 				while ((line = reader.readLine()) != null) {
@@ -243,5 +243,5 @@ public class Formatter {
 			return "";
 		}
 	}
-
+	
 }

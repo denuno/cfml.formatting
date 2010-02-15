@@ -14,18 +14,18 @@ import cfml.formatting.preferences.FormatterPreferences;
 import junit.framework.TestCase;
 
 public abstract class FormattingTestCase extends TestCase {
-
+	
 	private Formatter fFormatter;
-
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		FormatterPreferences prefs = new FormatterPreferences();
 		fFormatter = new Formatter(prefs);
 	}
-
+	
 	public void testFormat() {
 	}
-
+	
 	public String[] formatFile(String file) {
 		URL testFileURL, formattedFileURL;
 		String[] results = new String[2];
@@ -40,7 +40,7 @@ public abstract class FormattingTestCase extends TestCase {
 			fstream.close();
 			results[0] = convertStreamToString(formattedFileURL.openStream());
 			results[1] = formatted;
-
+			
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -50,12 +50,12 @@ public abstract class FormattingTestCase extends TestCase {
 		}
 		return results;
 	}
-
+	
 	protected String convertStreamToString(InputStream is) throws IOException {
 		if (is != null) {
 			StringBuilder sb = new StringBuilder();
 			String line;
-
+			
 			try {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 				while ((line = reader.readLine()) != null) {
@@ -69,5 +69,5 @@ public abstract class FormattingTestCase extends TestCase {
 			return "";
 		}
 	}
-
+	
 }
