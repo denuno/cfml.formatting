@@ -86,12 +86,18 @@ public class Formatter {
 		sourceFormatter.setCollapseWhiteSpace(collapseWhitespace);
 		sourceFormatter.setNewLine(newLine);
 		String results = sourceFormatter.toString();
-
+		
 		Source formattedSource = new Source(results);
 		OutputDocument outputDocument = new OutputDocument(formattedSource);
-		unformatTags(CFMLTagTypes.CFML_MAIL, source, formattedSource, outputDocument);
-		closeTags(CFMLTagTypes.CFML_SET, source, formattedSource, outputDocument);
+		//formattedSource.fullSequentialParse();
 		// unformatTags(CFMLTagTypes.CFML_SAVECONTENT,source,formattedSource,outputDocument);
+		if (prefs.getCloseTags()) {
+			String[] closeTagList = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow".split(",");
+			for(int x = 0; x < closeTagList.length; x++) {
+				closeTags(closeTagList[x].trim(), formattedSource, outputDocument);	
+			}
+		}
+		unformatTags(CFMLTagTypes.CFML_MAIL, source, formattedSource, outputDocument);
 		results = outputDocument.toString();
 		if (changeTagCase) {
 			if (changeTagCaseLower) {
@@ -99,15 +105,6 @@ public class Formatter {
 			} else {
 				results = changeTagCase(results, true);
 			}
-		}
-		if (prefs.getCloseTags()) {
-			results = results.replaceAll("(?si)<(cfabort?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
-			results = results.replaceAll("(?si)<(cfargument?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
-			results = results.replaceAll("(?si)<(cfreturn?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
-			results = results.replaceAll("(?si)<(cfinput?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
-			results = results.replaceAll("(?si)<(cfimport?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
-			results = results.replaceAll("(?si)<(cfdump?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
-			results = results.replaceAll("(?si)<(cfthrow?.*?[^\\s$|/|]?)\\s?/?>", "<$1 />");
 		}
 		results = results.replaceAll("(?si)<(cfcomponent[^>]*)>", "<$1>" + newLine);
 		results = results.replaceAll("(?si)(\\s+)<(/cfcomponent[^>]*)>", newLine + "$1<$2>");
@@ -133,6 +130,7 @@ public class Formatter {
 		}
 	}
 
+
 	public void unformatTags(StartTagType startTagType, Source source, Source formattedSource,
 			OutputDocument outputDocument) {
 		List oldCfmailStartTags = source.getAllStartTags(startTagType);
@@ -146,12 +144,18 @@ public class Formatter {
 		}
 	}
 
-	public void closeTags(StartTagType startTagType, Source source, Source formattedSource,
+	private void closeTags(String startTagType, Source source,OutputDocument outputDocument) {		
+		List startTags = source.getAllStartTags(startTagType);		
+		closeTags(startTags, outputDocument);
+	}
+	public void closeTags(StartTagType startTagType, Source source,
 			OutputDocument outputDocument) {
-		List oldCfmailStartTags = source.getAllStartTags(startTagType);
-		List newCfmailStartTags = formattedSource.getAllStartTags(startTagType);
-		int curTag = 0;
-		for (Iterator i = newCfmailStartTags.iterator(); i.hasNext();) {
+		List startTags = source.getAllStartTags(startTagType);
+		closeTags(startTags, outputDocument);
+	}
+	public void closeTags(List startTags,
+			OutputDocument outputDocument) {
+		for (Iterator i = startTags.iterator(); i.hasNext();) {
 			StartTag hyperlinkStartTag = (StartTag) i.next();
 			if(hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != '/'){
 				if(hyperlinkStartTag.charAt(hyperlinkStartTag.length() - 2) != ' ') {					
@@ -164,7 +168,6 @@ public class Formatter {
 					outputDocument.insert(hyperlinkStartTag.getEnd()-2," ");	
 				}				
 			}
-			curTag++;
 		}
 	}
 

@@ -5,4 +5,4 @@
        ,"third"
 	  --->
        ,{field1 = "val2"}
-]><cfset bob="fun"/><cfset woo="hoo">
+]><cfabort><cfset bob="fun"/><cfset woo="hoo">
