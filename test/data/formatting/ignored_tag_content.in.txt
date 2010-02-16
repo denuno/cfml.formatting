@@ -8,3 +8,11 @@ asdfasdf	asdfasdf
 				asdfasdf
 				sdfsdf
 	</cfmail>
+<cfif true>	<cfsavecontent variable="wee">
+nobab
+	tab
+	tag
+			bab
+	bat
+					wayouttab
+</cfsavecontent></cfif>

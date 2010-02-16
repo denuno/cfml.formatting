@@ -8,50 +8,48 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Attributes;
 import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.EndTag;
-import net.htmlparser.jericho.EndTagType;
 import net.htmlparser.jericho.OutputDocument;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.SourceFormatter;
 import net.htmlparser.jericho.StartTag;
-import net.htmlparser.jericho.StartTagType;
 import net.htmlparser.jericho.Tag;
-
 import cfml.formatting.preferences.FormatterPreferences;
 import cfml.parsing.cfmentat.tag.CFMLTagTypes;
-import cfml.parsing.cfmentat.tag.GenericStartTagTypeCf;
+import cfml.parsing.cfmentat.tag.CFMLTags;
 
 public class Formatter {
-
+	
 	private static final String lineSeparator = System.getProperty("line.separator");
-	private static final String[] fCloseTagList = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow".split(",");
+	private static final String[] fCloseTagList = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow"
+			.split(",");
+	private static final String[] funformatTagList = "cfmail,cfquery,cfsavecontent,cfcontent".split(",");
 	private static String fCurrentIndent;
 	private static int MAX_LENGTH = 0;
 	private static int col;
 	FormatterPreferences fPrefs;
 	LineTrimmer lineTrimmer = new LineTrimmer();
-
+	
 	public Formatter(FormatterPreferences prefs) {
 		fPrefs = prefs;
 	}
-
+	
 	public String format(String contents, FormatterPreferences prefs) {
 		String indentation = prefs.getCanonicalIndent();
 		String newLine = lineSeparator;
-		CFMLTagTypes.register();
-		Source source = new Source(contents.replaceAll("\\r?\\n", newLine));
+		CFMLTags.register();
+		contents = contents.replaceAll("\\r?\\n", newLine);
+		Source source = new Source(contents);
 		// this won't do anything if collapse whitespace is on!
 		// source.ignoreWhenParsing(source.getAllElements(HTMLElementName.SCRIPT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SAVECONTENT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SCRIPT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_MAIL));
 		source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_COMMENT));
-
+		
 		List<Element> elementList = source.getAllElements();
 		for (Element element : elementList) {
 			System.out.println("-------------------------------------------------------------------------------");
@@ -61,7 +59,7 @@ public class Formatter {
 			System.out.println("Source text with content:\n" + element);
 		}
 		System.out.println(source.getCacheDebugInfo());
-
+		
 		boolean enforceMaxLineWidth = prefs.getEnforceMaximumLineWidth();
 		boolean tidyTags = prefs.tidyTags();
 		boolean collapseWhitespace = prefs.collapseWhiteSpace();
@@ -71,16 +69,16 @@ public class Formatter {
 		boolean changeTagCaseLower = prefs.changeTagCaseLower();
 		int maxLineWidth = prefs.getMaximumLineWidth();
 		String currentIndent = prefs.getInitialIndent();
-
+		
 		// displaySegments(source.getAllElements(HTMLElementName.SCRIPT));
 		// source.fullSequentialParse();
-
+		
 		// java 5 req?
 		// System.out.println("Unregistered start tags:");
 		// displaySegments(source.getAllTags(StartTagType.UNREGISTERED));
 		// System.out.println("Unregistered end tags:");
 		// displaySegments(source.getAllTags(EndTagType.UNREGISTERED));
-
+		
 		SourceFormatter sourceFormatter = source.getSourceFormatter();
 		sourceFormatter.setIndentString(indentation);
 		sourceFormatter.setTidyTags(tidyTags);
@@ -90,9 +88,9 @@ public class Formatter {
 		String results = sourceFormatter.toString();
 		
 		Source formattedSource = new Source(results);
-		results = unformatTagTypes("cfmail,cfquery".split(","),source,formattedSource);
+		results = unformatTagTypes(funformatTagList, source, formattedSource);
 		if (prefs.getCloseTags()) {
-			results = closeTagTypes(fCloseTagList,results);
+			results = closeTagTypes(fCloseTagList, results);
 		}
 		if (changeTagCase) {
 			if (changeTagCaseLower) {
@@ -124,24 +122,22 @@ public class Formatter {
 			return lineTrimmer.formatLineLength(indented.toString(), maxLineWidth, fPrefs.getCanonicalIndent());
 		}
 	}
-
-
+	
 	private String unformatTagTypes(String[] tagStartTypes, Source source, Source formattedSource) {
 		List oldCfmailStartTags = source.getAllStartTags();
 		List newCfmailStartTags = formattedSource.getAllStartTags();
 		OutputDocument outputDocument = new OutputDocument(formattedSource);
 		int curTag = 0;
-		for (Iterator i = oldCfmailStartTags.iterator(); i.hasNext();) {
+		for (Iterator i = newCfmailStartTags.iterator(); i.hasNext();) {
 			StartTag tagStart = (StartTag) i.next();
-			if(Arrays.asList(tagStartTypes).contains(tagStart.getName())) {
+			if (Arrays.asList(tagStartTypes).contains(tagStart.getName())) {
 				outputDocument.replace(((Tag) tagStart).getElement(), ((Tag) oldCfmailStartTags.get(curTag))
 						.getElement());
 			}
 			curTag++;
 		}
 		return outputDocument.toString();
-	}	
-	
+	}
 	
 	private String closeTagType(String tagStartType, String content) {
 		Source source = new Source(content);
@@ -149,41 +145,41 @@ public class Formatter {
 		OutputDocument outputDocument = new OutputDocument(source);
 		for (Iterator i = allTags.iterator(); i.hasNext();) {
 			StartTag tagStart = (StartTag) i.next();
-			if(tagStart.getName().equals(tagStartType)) {
-				if(tagStart.charAt(tagStart.length() - 2) != '/'){
-					if(tagStart.charAt(tagStart.length() - 2) != ' ') {					
-						outputDocument.insert(tagStart.getEnd()-1," /");	
+			if (tagStart.getName().equals(tagStartType)) {
+				if (tagStart.charAt(tagStart.length() - 2) != '/') {
+					if (tagStart.charAt(tagStart.length() - 2) != ' ') {
+						outputDocument.insert(tagStart.getEnd() - 1, " /");
 					} else {
-						outputDocument.insert(tagStart.getEnd()-1,"/");						
+						outputDocument.insert(tagStart.getEnd() - 1, "/");
 					}
 				} else {
-					if(tagStart.charAt(tagStart.length() - 2) != ' ') {					
-						outputDocument.insert(tagStart.getEnd()-2," ");	
-					}				
-				}				
+					if (tagStart.charAt(tagStart.length() - 2) != ' ') {
+						outputDocument.insert(tagStart.getEnd() - 2, " ");
+					}
+				}
 			}
 		}
 		return outputDocument.toString();
 	}
-
+	
 	private String closeTagTypes(String[] tagStartTypes, String content) {
 		Source source = new Source(content);
 		List<StartTag> allTags = source.getAllStartTags();
 		OutputDocument outputDocument = new OutputDocument(source);
 		for (Iterator i = allTags.iterator(); i.hasNext();) {
 			StartTag tagStart = (StartTag) i.next();
-			if(Arrays.asList(tagStartTypes).contains(tagStart.getName())) {
-				if(tagStart.charAt(tagStart.length() - 2) != '/'){
-					if(tagStart.charAt(tagStart.length() - 2) != ' ') {					
-						outputDocument.insert(tagStart.getEnd()-1," /");	
+			if (Arrays.asList(tagStartTypes).contains(tagStart.getName())) {
+				if (tagStart.charAt(tagStart.length() - 2) != '/') {
+					if (tagStart.charAt(tagStart.length() - 2) != ' ') {
+						outputDocument.insert(tagStart.getEnd() - 1, " /");
 					} else {
-						outputDocument.insert(tagStart.getEnd()-1,"/");						
+						outputDocument.insert(tagStart.getEnd() - 1, "/");
 					}
 				} else {
-					if(tagStart.charAt(tagStart.length() - 2) != ' ') {					
-						outputDocument.insert(tagStart.getEnd()-2," ");	
-					}				
-				}				
+					if (tagStart.charAt(tagStart.length() - 2) != ' ') {
+						outputDocument.insert(tagStart.getEnd() - 2, " ");
+					}
+				}
 			}
 		}
 		return outputDocument.toString();
@@ -223,11 +219,11 @@ public class Formatter {
 		}
 		return outputDocument.toString();
 	}
-
+	
 	public String format(String string) {
 		return format(string, fPrefs);
 	}
-
+	
 	public String format(URL testFileURL) {
 		try {
 			return format(testFileURL.getContent().toString(), fPrefs);
@@ -236,7 +232,7 @@ public class Formatter {
 		}
 		return "FILE NOT FOUND";
 	}
-
+	
 	public String format(InputStream inStream) {
 		try {
 			return format(convertStreamToString(inStream), fPrefs);
@@ -245,12 +241,12 @@ public class Formatter {
 		}
 		return "FILE NOT FOUND";
 	}
-
+	
 	public String convertStreamToString(InputStream is) throws IOException {
 		if (is != null) {
 			StringBuilder sb = new StringBuilder();
 			String line;
-
+			
 			try {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 				while ((line = reader.readLine()) != null) {
@@ -264,5 +260,5 @@ public class Formatter {
 			return "";
 		}
 	}
-
+	
 }
