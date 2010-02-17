@@ -147,14 +147,14 @@ public class Formatter {
 			StartTag tagStart = (StartTag) i.next();
 			if (tagStart.getName().equals(tagStartType)) {
 				if (tagStart.charAt(tagStart.length() - 2) != '/') {
-					if (tagStart.charAt(tagStart.length() - 2) != ' ') {
+					if (tagStart.charAt(tagStart.length() - 3) != ' ') {
 						outputDocument.insert(tagStart.getEnd() - 1, " /");
 					} else {
 						outputDocument.insert(tagStart.getEnd() - 1, "/");
 					}
 				} else {
-					if (tagStart.charAt(tagStart.length() - 2) != ' ') {
-						outputDocument.insert(tagStart.getEnd() - 2, " ");
+					if (tagStart.charAt(tagStart.length() - 3) != ' ') {
+						outputDocument.insert(tagStart.getEnd() - 3, " ");
 					}
 				}
 			}
@@ -176,7 +176,7 @@ public class Formatter {
 						outputDocument.insert(tagStart.getEnd() - 1, "/");
 					}
 				} else {
-					if (tagStart.charAt(tagStart.length() - 2) != ' ') {
+					if (tagStart.charAt(tagStart.length() - 3) != ' ') {
 						outputDocument.insert(tagStart.getEnd() - 2, " ");
 					}
 				}

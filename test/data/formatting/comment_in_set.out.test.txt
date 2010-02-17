@@ -7,4 +7,6 @@
 	,{field1 = "val2"}
 	] />
 <cfset bob="fun" />
+<cfset bob="fun" />
+<cfset bob="fun" />
 <cfset woo="hoo" />

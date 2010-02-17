@@ -2,7 +2,6 @@ package cfml.formatting;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,12 +9,12 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import cfml.formatting.preferences.FormatterPreferences;
 import junit.framework.TestCase;
+import cfml.formatting.preferences.FormatterPreferences;
 
 public abstract class FormattingTestCase extends TestCase {
 	
-	private Formatter fFormatter;
+	protected Formatter fFormatter;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
