@@ -18,7 +18,6 @@ import net.htmlparser.jericho.SourceFormatter;
 import net.htmlparser.jericho.StartTag;
 import net.htmlparser.jericho.Tag;
 import cfml.formatting.preferences.FormatterPreferences;
-import cfml.parsing.cfmentat.tag.CFMLTagTypes;
 import cfml.parsing.cfmentat.tag.CFMLTags;
 
 public class Formatter {
@@ -48,7 +47,7 @@ public class Formatter {
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SAVECONTENT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SCRIPT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_MAIL));
-		source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_COMMENT));
+		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_COMMENT));
 		
 		List<Element> elementList = source.getAllElements();
 		for (Element element : elementList) {
