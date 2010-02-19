@@ -1,0 +1,23 @@
+<cfif structKeyExists(URL,"path")>
+	<cfset basepath = getDirectoryFromPath(getCurrentTemplatePath()) />
+	<cfset filepath = basePath & "lib/" & url.path />
+	<cfif fileExists(filepath)>
+	
+		<cfif listLast(filepath,".") eq "css">
+			<cffile action="read" file="#filepath#" variable="cssfile" charset="utf-8">
+<!--- 
+				<cfset cssfile = replace(cssfile,": url(",": url(/mapping-tag/dojo/lib.cfm?path=dojo/","all") />
+				<cfset cssfile = replace(cssfile,": url(",": url(/mapping-tag/dojo/lib.cfm?path=dojo/","all") />
+		<cfset cssfile = replace(cssfile,": url(",": url(/mapping-tag/dojo/lib.cfm?path=dojo/","all") />
+			<cfset cssfile = replace(cssfile,": url(",": url(/mapping-tag/dojo/lib.cfm?path=dojo/","all") />
+ --->
+			<cfcontent type="text/css" reset="true"><cfoutput>#cssfile#</cfoutput>
+		<cfelseif listLast(filepath,".") eq "js">
+			<cfcontent file="#filepath#" reset="true" type="text/javascript">
+		<cfelse>
+			<cfcontent file="#filepath#" reset="true">
+		</cfif>
+	</cfif>
+<cfelse>
+  Not found
+</cfif>

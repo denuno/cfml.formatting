@@ -16,16 +16,20 @@ import net.htmlparser.jericho.OutputDocument;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.SourceFormatter;
 import net.htmlparser.jericho.StartTag;
+import net.htmlparser.jericho.StartTagType;
 import net.htmlparser.jericho.Tag;
+import net.htmlparser.jericho.TagType;
 import cfml.formatting.preferences.FormatterPreferences;
 import cfml.parsing.cfmentat.tag.CFMLTags;
+import cfml.parsing.cfmentat.tag.CFSource;
 
 public class Formatter {
 	
 	private static final String lineSeparator = System.getProperty("line.separator");
 	private static final String[] fCloseTagList = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow"
 			.split(",");
-	private static final String[] funformatTagList = "cfmail,cfquery,cfsavecontent,cfcontent".split(",");
+	private static final String[] fUnformatTagList = "cfmail,cfquery,cfsavecontent,cfcontent".split(",");
+	private static final String[] fNoCondenseTagList = "cfif".split(",");
 	private static String fCurrentIndent;
 	private static int MAX_LENGTH = 0;
 	private static int col;
@@ -39,15 +43,13 @@ public class Formatter {
 	public String format(String contents, FormatterPreferences prefs) {
 		String indentation = prefs.getCanonicalIndent();
 		String newLine = lineSeparator;
-		CFMLTags.register();
 		contents = contents.replaceAll("\\r?\\n", newLine);
-		Source source = new Source(contents);
+		CFSource source = new CFSource(contents);
 		// this won't do anything if collapse whitespace is on!
 		// source.ignoreWhenParsing(source.getAllElements(HTMLElementName.SCRIPT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SAVECONTENT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SCRIPT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_MAIL));
-		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_COMMENT));
 		
 		List<Element> elementList = source.getAllElements();
 		for (Element element : elementList) {
@@ -86,8 +88,9 @@ public class Formatter {
 		sourceFormatter.setNewLine(newLine);
 		String results = sourceFormatter.toString();
 		
-		Source formattedSource = new Source(results);
-		results = unformatTagTypes(funformatTagList, source, formattedSource);
+		CFSource formattedSource = new CFSource(results);
+		StartTagType.setTagTypesIgnoringEnclosedMarkup(new TagType[] { CFMLTags.CFML_COMMENT });
+		results = unformatTagTypes(fUnformatTagList, source, formattedSource);
 		if (prefs.getCloseTags()) {
 			results = closeTagTypes(fCloseTagList, results);
 		}
@@ -98,6 +101,7 @@ public class Formatter {
 				results = changeTagCase(results, true);
 			}
 		}
+		results = condenseTags(results, 80);
 		results = results.replaceAll("(?si)<(cfcomponent[^>]*)>", "<$1>" + newLine);
 		results = results.replaceAll("(?si)(\\s+)<(/cfcomponent[^>]*)>", newLine + "$1<$2>");
 		results = results.replaceAll("(?si)(\\s+)<(cffunction[^>]*)>", newLine + "$1<$2>");
@@ -122,16 +126,17 @@ public class Formatter {
 		}
 	}
 	
-	private String unformatTagTypes(String[] tagStartTypes, Source source, Source formattedSource) {
+	private String unformatTagTypes(String[] tagStartTypes, CFSource source, CFSource formattedSource) {
 		List oldCfmailStartTags = source.getAllStartTags();
 		List newCfmailStartTags = formattedSource.getAllStartTags();
-		OutputDocument outputDocument = new OutputDocument(formattedSource);
+		OutputDocument outputDocument = formattedSource.getOutputDocument();
 		int curTag = 0;
 		for (Iterator i = newCfmailStartTags.iterator(); i.hasNext();) {
 			StartTag tagStart = (StartTag) i.next();
 			if (Arrays.asList(tagStartTypes).contains(tagStart.getName())) {
 				outputDocument.replace(((Tag) tagStart).getElement(), ((Tag) oldCfmailStartTags.get(curTag))
 						.getElement());
+				tagStart.getTagType().setTagTypesIgnoringEnclosedMarkup(new TagType[] { tagStart.getTagType() });
 			}
 			curTag++;
 		}
@@ -178,6 +183,27 @@ public class Formatter {
 					if (tagStart.charAt(tagStart.length() - 3) != ' ') {
 						outputDocument.insert(tagStart.getEnd() - 2, " ");
 					}
+				}
+			}
+		}
+		return outputDocument.toString();
+	}
+	
+	private String condenseTags(String content, int maxLength) {
+		Source source = new Source(content);
+		List<StartTag> allTags = source.getAllStartTags();
+		OutputDocument outputDocument = new OutputDocument(source);
+		for (Iterator i = allTags.iterator(); i.hasNext();) {
+			int currentLen = 0;
+			StartTag tagStart = (StartTag) i.next();
+			currentLen = +(tagStart.getEnd() - tagStart.getBegin());
+			if (tagStart.getElement().getEndTag() != null
+					&& !Arrays.asList(fNoCondenseTagList).contains(tagStart.getName())
+					&& !Arrays.asList(fUnformatTagList).contains(tagStart.getName())) {
+				currentLen = +(tagStart.getElement().getEndTag().getBegin() - tagStart.getEnd());
+				if (currentLen < maxLength) {
+					outputDocument.replace(tagStart.getElement().getContent(), tagStart.getElement().getContent()
+							.toString().trim());
 				}
 			}
 		}

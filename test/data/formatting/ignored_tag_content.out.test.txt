@@ -2,21 +2,25 @@
 	wee
 </cfif>
 <cfmail to="some" from="wee" subject="balls">
-	asdfasdf
-asdfasdf
-asdfasdf	asdfasdf
-	asdf		asdfasdf
-		asdfasdf
-				asdfasdf
-				sdfsdf
-	</cfmail>
+	asdfasdf asdfasdf asdfasdf asdfasdf asdf asdfasdf asdfasdf asdfasdf sdfsdf 
+</cfmail>
 <cfif true>
 	<cfsavecontent variable="wee">
-nobab
-	tab
-	tag
-			bab
-	bat
-					wayouttab
-</cfsavecontent>
+		nobab tab tag bab bat wayouttab 
+	</cfsavecontent>
+</cfif>
+<cfif findNoCase("Blah blah, blah.",csvData)>
+	<cfsavecontent variable="errMsg">
+		<cfoutput><h2>
+				ERROR!
+			</h2>
+			<br />
+			#csvData#</cfoutput>
+	</cfsavecontent>
+	<cfset writeoutput(errMsg) />
+	<cfabort />
+	<cfthrow
+		type = "sync.error"
+		message = "sync deal error esse"
+		detail = "#errMsg#" />
 </cfif>
