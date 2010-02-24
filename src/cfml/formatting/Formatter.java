@@ -26,7 +26,7 @@ import cfml.parsing.cfmentat.tag.CFSource;
 public class Formatter {
 	
 	private static final String lineSeparator = System.getProperty("line.separator");
-	private static final String[] fCloseTagList = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow"
+	private static final String[] fCloseTagList = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow,cfzip"
 			.split(",");
 	private static final String[] fUnformatTagList = "cfmail,cfquery,cfsavecontent,cfcontent".split(",");
 	private static final String[] fNoCondenseTagList = "cfif".split(",");
@@ -104,10 +104,14 @@ public class Formatter {
 		results = condenseTags(results, 80);
 		results = results.replaceAll("(?si)<(cfcomponent[^>]*)>", "<$1>" + newLine);
 		results = results.replaceAll("(?si)(\\s+)<(/cfcomponent[^>]*)>", newLine + "$1<$2>");
+		results = results.replaceAll("(?si)(\\s+)<(cfif[^>]*)>", newLine + "$1<$2>");
+		results = results.replaceAll("(?si)(\\s+)<(/cfif[^>]*)>", "$1<$2>" + newLine);
 		results = results.replaceAll("(?si)(\\s+)<(cffunction[^>]*)>", newLine + "$1<$2>");
 		results = results.replaceAll("(?si)(\\s+)<(/cffunction[^>]*)>", "$1<$2>" + newLine);
 		results = results.replaceAll("(?i)" + newLine + "{3}(\\s+)<(cffunction)", newLine + newLine + "$1<$2");
 		results = results.replaceAll("(?si)(\\s+)<(/cffunction[^>]*)>" + newLine + "{3}", "$1<$2>" + newLine + newLine);
+		results = results.replaceAll("(?i)" + newLine + "{3}(\\s+)<(cfif)", newLine + newLine + "$1<$2");
+		results = results.replaceAll("(?si)(\\s+)<(/cfif[^>]*)>" + newLine + "{3}", "$1<$2>" + newLine + newLine);
 		results = results.replaceAll("(?i)" + indentation + "<(cfelse)", "<$1");
 		// indent to whatever the current level is
 		String[] lines = results.split(newLine);
