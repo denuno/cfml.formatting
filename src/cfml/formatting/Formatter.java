@@ -20,8 +20,8 @@ import net.htmlparser.jericho.StartTagType;
 import net.htmlparser.jericho.Tag;
 import net.htmlparser.jericho.TagType;
 import cfml.formatting.preferences.FormatterPreferences;
+import cfml.parsing.CFMLSource;
 import cfml.parsing.cfmentat.tag.CFMLTags;
-import cfml.parsing.cfmentat.tag.CFSource;
 
 public class Formatter {
 	
@@ -44,7 +44,7 @@ public class Formatter {
 		String indentation = prefs.getCanonicalIndent();
 		String newLine = lineSeparator;
 		contents = contents.replaceAll("\\r?\\n", newLine);
-		CFSource source = new CFSource(contents);
+		CFMLSource source = new CFMLSource(contents);
 		// this won't do anything if collapse whitespace is on!
 		// source.ignoreWhenParsing(source.getAllElements(HTMLElementName.SCRIPT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SAVECONTENT));
@@ -88,7 +88,7 @@ public class Formatter {
 		sourceFormatter.setNewLine(newLine);
 		String results = sourceFormatter.toString();
 		
-		CFSource formattedSource = new CFSource(results);
+		CFMLSource formattedSource = new CFMLSource(results);
 		StartTagType.setTagTypesIgnoringEnclosedMarkup(new TagType[] { CFMLTags.CFML_COMMENT });
 		results = unformatTagTypes(fUnformatTagList, source, formattedSource);
 		if (prefs.getCloseTags()) {
@@ -130,7 +130,7 @@ public class Formatter {
 		}
 	}
 	
-	private String unformatTagTypes(String[] tagStartTypes, CFSource source, CFSource formattedSource) {
+	private String unformatTagTypes(String[] tagStartTypes, CFMLSource source, CFMLSource formattedSource) {
 		List oldCfmailStartTags = source.getAllStartTags();
 		List newCfmailStartTags = formattedSource.getAllStartTags();
 		OutputDocument outputDocument = formattedSource.getOutputDocument();
