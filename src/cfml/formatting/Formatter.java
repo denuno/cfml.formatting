@@ -28,7 +28,8 @@ public class Formatter {
 	private static final String lineSeparator = System.getProperty("line.separator");
 	private static final String[] fCloseTagList = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow,cfzip"
 			.split(",");
-	private static final String[] fUnformatTagList = "cfmail,cfquery,cfsavecontent,cfcontent".split(",");
+	private static final String[] fUnformatTagList = "cfmail,cfquery,cfsavecontent,cfcontent,cffunction,cfcomponent"
+			.split(",");
 	private static final String[] fNoCondenseTagList = "cfif".split(",");
 	private static String fCurrentIndent;
 	private static int MAX_LENGTH = 0;

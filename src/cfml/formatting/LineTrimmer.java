@@ -6,7 +6,7 @@ import net.htmlparser.jericho.EndTag;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 import net.htmlparser.jericho.Tag;
-import cfml.parsing.cfmentat.tag.CFMLTagTypes;
+import cfml.parsing.cfmentat.tag.CFMLTags;
 
 public class LineTrimmer {
 	private static final String lineSeparator = System.getProperty("line.separator");
@@ -23,7 +23,7 @@ public class LineTrimmer {
 	 */
 	public String formatLineLength(String contents, int maxLineWidth, String indentation) {
 		String newLine = lineSeparator;
-		CFMLTagTypes.register();
+		CFMLTags.register();
 		String line = "";
 		int indentLen = 0;
 		char isWS;
