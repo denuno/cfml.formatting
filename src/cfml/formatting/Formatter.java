@@ -28,8 +28,8 @@ public class Formatter {
 	private static final String lineSeparator = System.getProperty("line.separator");
 	private static final String[] fCloseTagList = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow,cfzip"
 			.split(",");
-	private static final String[] fUnformatTagList = "cfmail,cfquery,cfsavecontent,cfcontent,cffunction,cfcomponent"
-			.split(",");
+	private static final String[] fUnformatTagList = "cfmail,cfquery,cfsavecontent,cfcontent".split(",");
+	// private static final String[] fNoCondenseTagList = "cfif,cffunction,cfcomponent,cfargument,cfscript".split(",");
 	private static final String[] fNoCondenseTagList = "cfif".split(",");
 	private static String fCurrentIndent;
 	private static int MAX_LENGTH = 0;
@@ -49,23 +49,23 @@ public class Formatter {
 		// this won't do anything if collapse whitespace is on!
 		// source.ignoreWhenParsing(source.getAllElements(HTMLElementName.SCRIPT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SAVECONTENT));
-		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SCRIPT));
+		// source.ignoreWhenParsing(source.getAllElements(CFMLTags.CFML_SCRIPT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_MAIL));
 		
 		List<Element> elementList = source.getAllElements();
-		for (Element element : elementList) {
-			System.out.println("-------------------------------------------------------------------------------");
-			System.out.println(element.getDebugInfo());
-			if (element.getAttributes() != null)
-				System.out.println("XHTML StartTag:\n" + element.getStartTag().tidy(true));
-			System.out.println("Source text with content:\n" + element);
-		}
-		System.out.println(source.getCacheDebugInfo());
-		
+		/*
+		 * for (Element element : elementList) {
+		 * System.out.println("-------------------------------------------------------------------------------");
+		 * System.out.println(element.getDebugInfo()); if (element.getAttributes() != null)
+		 * System.out.println("XHTML StartTag:\n" + element.getStartTag().tidy(true));
+		 * System.out.println("Source text with content:\n" + element); }
+		 * System.out.println(source.getCacheDebugInfo());
+		 */
 		boolean enforceMaxLineWidth = prefs.getEnforceMaximumLineWidth();
 		boolean tidyTags = prefs.tidyTags();
 		boolean collapseWhitespace = prefs.collapseWhiteSpace();
 		boolean indentAllElements = prefs.indentAllElements();
+		boolean condenseTags = prefs.condenseTags();
 		boolean changeTagCase = prefs.changeTagCase();
 		boolean changeTagCaseUpper = prefs.changeTagCaseUpper();
 		boolean changeTagCaseLower = prefs.changeTagCaseLower();
@@ -102,17 +102,15 @@ public class Formatter {
 				results = changeTagCase(results, true);
 			}
 		}
-		results = condenseTags(results, 80);
+		if (condenseTags) {
+			results = condenseTags(results, 80);
+		}
 		results = results.replaceAll("(?si)<(cfcomponent[^>]*)>", "<$1>" + newLine);
 		results = results.replaceAll("(?si)(\\s+)<(/cfcomponent[^>]*)>", newLine + "$1<$2>");
-		results = results.replaceAll("(?si)(\\s+)<(cfif[^>]*)>", newLine + "$1<$2>");
-		results = results.replaceAll("(?si)(\\s+)<(/cfif[^>]*)>", "$1<$2>" + newLine);
 		results = results.replaceAll("(?si)(\\s+)<(cffunction[^>]*)>", newLine + "$1<$2>");
 		results = results.replaceAll("(?si)(\\s+)<(/cffunction[^>]*)>", "$1<$2>" + newLine);
 		results = results.replaceAll("(?i)" + newLine + "{3}(\\s+)<(cffunction)", newLine + newLine + "$1<$2");
 		results = results.replaceAll("(?si)(\\s+)<(/cffunction[^>]*)>" + newLine + "{3}", "$1<$2>" + newLine + newLine);
-		results = results.replaceAll("(?i)" + newLine + "{3}(\\s+)<(cfif)", newLine + newLine + "$1<$2");
-		results = results.replaceAll("(?si)(\\s+)<(/cfif[^>]*)>" + newLine + "{3}", "$1<$2>" + newLine + newLine);
 		results = results.replaceAll("(?i)" + indentation + "<(cfelse)", "<$1");
 		// indent to whatever the current level is
 		String[] lines = results.split(newLine);

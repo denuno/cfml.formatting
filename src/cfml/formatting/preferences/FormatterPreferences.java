@@ -1,6 +1,5 @@
 package cfml.formatting.preferences;
 
-import java.util.Map;
 import java.util.Properties;
 
 public class FormatterPreferences {
@@ -20,6 +19,7 @@ public class FormatterPreferences {
 		public static final String FORMATTER_CHANGE_TAG_CASE_UPPER = "true";
 		public static final String FORMATTER_CHANGE_TAG_CASE_LOWER = "false";
 		public static final String FORMATTER_INITIAL_INDENT = "";
+		public static final String FORMATTER_CONDENSE_TAGS = "true";
 	}
 	
 	Properties fPrefs;
@@ -192,6 +192,14 @@ public class FormatterPreferences {
 		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_CHANGE_TAG_CASE_LOWER, Boolean.toString(heckYes));
 	}
 	
+	public boolean condenseTags() {
+		return Boolean.parseBoolean(fPrefs.getProperty(FormatterPreferenceConstants.FORMATTER_CONDENSE_TAGS,
+				defaults.FORMATTER_CONDENSE_TAGS));
+	}
+	
+	public void condenseTags(boolean heckYes) {
+		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_CONDENSE_TAGS, Boolean.toString(heckYes));
+	}
 	// public static boolean affectsFormatting(PropertyChangeEvent event) {
 	// String property = event.getProperty();
 	// return property.startsWith(FormatterPreferenceConstants.FORMATTER_ALIGN)
