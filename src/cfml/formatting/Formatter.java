@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import js.formatting.JSFormatter;
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Attributes;
 import net.htmlparser.jericho.Element;
@@ -19,16 +20,19 @@ import net.htmlparser.jericho.StartTag;
 import net.htmlparser.jericho.StartTagType;
 import net.htmlparser.jericho.Tag;
 import net.htmlparser.jericho.TagType;
+import sql.formatting.SQLFormatter;
 import cfml.formatting.preferences.FormatterPreferences;
 import cfml.parsing.CFMLSource;
 import cfml.parsing.cfmentat.tag.CFMLTags;
+import css.formatting.CssCompressor;
 
 public class Formatter {
 	
 	private static final String lineSeparator = System.getProperty("line.separator");
 	private static final String[] fCloseTagList = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow,cfzip"
 			.split(",");
-	private static final String[] fUnformatTagList = "cfmail,cfquery,cfsavecontent,cfcontent".split(",");
+	private static final String[] fUnformatTagList = "cfmail,cfquery,script,cfscript,cfsavecontent,cfcontent"
+			.split(",");
 	// private static final String[] fNoCondenseTagList = "cfif,cffunction,cfcomponent,cfargument,cfscript".split(",");
 	private static final String[] fNoCondenseTagList = "cfif".split(",");
 	private static String fCurrentIndent;
@@ -91,7 +95,6 @@ public class Formatter {
 		
 		CFMLSource formattedSource = new CFMLSource(results);
 		StartTagType.setTagTypesIgnoringEnclosedMarkup(new TagType[] { CFMLTags.CFML_COMMENT });
-		results = unformatTagTypes(fUnformatTagList, source, formattedSource);
 		if (prefs.getCloseTags()) {
 			results = closeTagTypes(fCloseTagList, results);
 		}
@@ -104,6 +107,16 @@ public class Formatter {
 		}
 		if (condenseTags) {
 			results = condenseTags(results, 80);
+		}
+		results = unformatTagTypes(fUnformatTagList, source, formattedSource);
+		if (fPrefs.formatSQL()) {
+			results = formatQueries(results);
+		}
+		if (fPrefs.formatJavaScript()) {
+			results = formatJavaScript(results);
+		}
+		if (fPrefs.formatCSS()) {
+			results = formatCSS(results);
 		}
 		results = results.replaceAll("(?si)<(cfcomponent[^>]*)>", "<$1>" + newLine);
 		results = results.replaceAll("(?si)(\\s+)<(/cfcomponent[^>]*)>", newLine + "$1<$2>");
@@ -129,6 +142,51 @@ public class Formatter {
 		}
 	}
 	
+	private String formatCSS(String intext) {
+		CFMLSource source = new CFMLSource(intext);
+		List<StartTag> queries = source.getTagsByName("style");
+		OutputDocument outputDocument = source.getOutputDocument();
+		for (Iterator i = queries.iterator(); i.hasNext();) {
+			StartTag tagStart = (StartTag) i.next();
+			Element query = ((Tag) tagStart).getElement();
+			String formatted = new CssCompressor(query.getContent().toString()).compress(-1) + lineSeparator;
+			outputDocument.replace(((Tag) tagStart).getElement().getContent(), lineSeparator + formatted);
+		}
+		String results = outputDocument.toString();
+		results = results.replaceAll("(?si)(\\s+)<(script[^>]*)>", lineSeparator + "$1<$2>");
+		return results;
+	}
+	
+	private String formatJavaScript(String jsText) {
+		CFMLSource source = new CFMLSource(jsText);
+		List<StartTag> queries = source.getTagsByName("script");
+		OutputDocument outputDocument = source.getOutputDocument();
+		for (Iterator i = queries.iterator(); i.hasNext();) {
+			StartTag tagStart = (StartTag) i.next();
+			Element query = ((Tag) tagStart).getElement();
+			String formatted = new JSFormatter(query.getContent().toString()).format() + lineSeparator;
+			outputDocument.replace(((Tag) tagStart).getElement().getContent(), lineSeparator + formatted);
+		}
+		String results = outputDocument.toString();
+		results = results.replaceAll("(?si)(\\s+)<(script[^>]*)>", lineSeparator + "$1<$2>");
+		return results;
+	}
+	
+	private String formatQueries(String sqlText) {
+		CFMLSource source = new CFMLSource(sqlText);
+		List<StartTag> queries = source.getTagsByName("cfquery");
+		OutputDocument outputDocument = source.getOutputDocument();
+		for (Iterator i = queries.iterator(); i.hasNext();) {
+			StartTag tagStart = (StartTag) i.next();
+			Element query = ((Tag) tagStart).getElement();
+			String formatted = new SQLFormatter(query.getContent().toString()).format() + lineSeparator;
+			outputDocument.replace(((Tag) tagStart).getElement().getContent(), formatted);
+		}
+		String results = outputDocument.toString();
+		results = results.replaceAll("(?si)(\\s+)<(cfquery[^>]*)>", lineSeparator + "$1<$2>");
+		return results;
+	}
+	
 	private String unformatTagTypes(String[] tagStartTypes, CFMLSource source, CFMLSource formattedSource) {
 		List oldCfmailStartTags = source.getAllStartTags();
 		List newCfmailStartTags = formattedSource.getAllStartTags();
@@ -137,9 +195,8 @@ public class Formatter {
 		for (Iterator i = newCfmailStartTags.iterator(); i.hasNext();) {
 			StartTag tagStart = (StartTag) i.next();
 			if (Arrays.asList(tagStartTypes).contains(tagStart.getName())) {
-				outputDocument.replace(((Tag) tagStart).getElement(), ((Tag) oldCfmailStartTags.get(curTag))
-						.getElement());
-				tagStart.getTagType().setTagTypesIgnoringEnclosedMarkup(new TagType[] { tagStart.getTagType() });
+				outputDocument.replace(((Tag) tagStart).getElement(),
+						((Tag) oldCfmailStartTags.get(curTag)).getElement());
 			}
 			curTag++;
 		}

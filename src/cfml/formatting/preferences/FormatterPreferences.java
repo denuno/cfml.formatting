@@ -20,6 +20,8 @@ public class FormatterPreferences {
 		public static final String FORMATTER_CHANGE_TAG_CASE_LOWER = "false";
 		public static final String FORMATTER_INITIAL_INDENT = "";
 		public static final String FORMATTER_CONDENSE_TAGS = "true";
+		public static final String FORMATTER_FORMAT_JS = "false";
+		public static final String FORMATTER_FORMAT_CSS = "true";
 	}
 	
 	Properties fPrefs;
@@ -200,6 +202,25 @@ public class FormatterPreferences {
 	public void condenseTags(boolean heckYes) {
 		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_CONDENSE_TAGS, Boolean.toString(heckYes));
 	}
+	
+	public boolean formatJavaScript() {
+		return Boolean.parseBoolean(fPrefs.getProperty(FormatterPreferenceConstants.FORMATTER_FORMAT_JS,
+				defaults.FORMATTER_FORMAT_JS));
+	}
+	
+	public void formatJavaScript(boolean heckYes) {
+		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_FORMAT_JS, Boolean.toString(heckYes));
+	}
+	
+	public boolean formatCSS() {
+		return Boolean.parseBoolean(fPrefs.getProperty(FormatterPreferenceConstants.FORMATTER_FORMAT_CSS,
+				defaults.FORMATTER_FORMAT_CSS));
+	}
+	
+	public void formatCSS(boolean heckYes) {
+		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_FORMAT_JS, Boolean.toString(heckYes));
+	}
+	
 	// public static boolean affectsFormatting(PropertyChangeEvent event) {
 	// String property = event.getProperty();
 	// return property.startsWith(FormatterPreferenceConstants.FORMATTER_ALIGN)
@@ -222,4 +243,5 @@ public class FormatterPreferences {
 	// property.startsWith(FormatterPreferenceConstants.FORMATTER_CHANGE_TAG_CASE_UPPER)
 	// || property.startsWith(FormatterPreferenceConstants.FORMATTER_WRAP_LONG);
 	// }
+	
 }
