@@ -19,5 +19,6 @@ public class FormatterPreferenceConstants {
 	public static final String FORMATTER_CONDENSE_TAGS = "formatter_condense_tags";
 	public static final String FORMATTER_FORMAT_JS = "formatter_format_js";
 	public static final String FORMATTER_FORMAT_CSS = "formatter_format_css";
+	public static final String FORMATTER_FORMAT_CFSCRIPT = "formatter_format_cfscript";
 	
 }

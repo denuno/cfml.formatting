@@ -115,6 +115,9 @@ public class Formatter {
 		if (fPrefs.formatJavaScript()) {
 			results = formatJavaScript(results);
 		}
+		if (fPrefs.formatCFScript()) {
+			results = formatCFScript(results);
+		}
 		if (fPrefs.formatCSS()) {
 			results = formatCSS(results);
 		}
@@ -150,6 +153,21 @@ public class Formatter {
 			StartTag tagStart = (StartTag) i.next();
 			Element query = ((Tag) tagStart).getElement();
 			String formatted = new CssCompressor(query.getContent().toString()).compress(-1) + lineSeparator;
+			outputDocument.replace(((Tag) tagStart).getElement().getContent(), lineSeparator + formatted);
+		}
+		String results = outputDocument.toString();
+		results = results.replaceAll("(?si)(\\s+)<(style[^>]*)>", lineSeparator + "$1<$2>");
+		return results;
+	}
+	
+	private String formatCFScript(String jsText) {
+		CFMLSource source = new CFMLSource(jsText);
+		List<StartTag> queries = source.getTagsByName("cfscript");
+		OutputDocument outputDocument = source.getOutputDocument();
+		for (Iterator i = queries.iterator(); i.hasNext();) {
+			StartTag tagStart = (StartTag) i.next();
+			Element query = ((Tag) tagStart).getElement();
+			String formatted = new JSFormatter(query.getContent().toString()).format() + lineSeparator;
 			outputDocument.replace(((Tag) tagStart).getElement().getContent(), lineSeparator + formatted);
 		}
 		String results = outputDocument.toString();

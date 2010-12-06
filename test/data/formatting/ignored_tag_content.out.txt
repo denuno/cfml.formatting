@@ -9,7 +9,7 @@ asdfasdf	asdfasdf
 		asdfasdf
 				asdfasdf
 				sdfsdf
-	</cfmail>
+	</cfmail> 
 <cfif true>
 	<cfsavecontent variable="wee">
 nobab
@@ -26,10 +26,10 @@ nobab
 			  <br />
 	  		#csvData#</cfoutput>
 			</cfsavecontent>
-	<cfset writeoutput(errMsg) />
+	<cfset writeoutput(errMsg)>
 	<cfabort />
 	<cfthrow
 		type = "sync.error"
 		message = "sync deal error esse"
-		detail = "#errMsg#" />
+		detail = "#errMsg#">
 </cfif>

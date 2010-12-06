@@ -16,17 +16,13 @@ nobab
 	bat
 					wayouttab
 </cfsavecontent></cfif>
-		<cfif findNoCase("Blah blah, blah.",csvData)>
-			<cfsavecontent variable="errMsg">
-		  <cfoutput>
-			  <h2>ERROR!</h2>
+		<cfif findNoCase("Blah blah, blah.",csvData)><cfsavecontent variable="errMsg">
+		  <cfoutput><h2>ERROR!</h2>
 			  <br />
-	  		#csvData#
-			</cfoutput>
+	  		#csvData#</cfoutput>
 			</cfsavecontent>
 			<cfset writeoutput(errMsg)><cfabort />
 			<cfthrow
 			   type = "sync.error"
 			   message = "sync deal error esse"
-			   detail = "#errMsg#">
-		</cfif>
+			   detail = "#errMsg#"></cfif>

@@ -21,7 +21,8 @@ public class FormatterPreferences {
 		public static final String FORMATTER_INITIAL_INDENT = "";
 		public static final String FORMATTER_CONDENSE_TAGS = "true";
 		public static final String FORMATTER_FORMAT_JS = "false";
-		public static final String FORMATTER_FORMAT_CSS = "true";
+		public static final String FORMATTER_FORMAT_CSS = "false";
+		public static final String FORMATTER_FORMAT_CFSCRIPT = "false";
 	}
 	
 	Properties fPrefs;
@@ -218,7 +219,16 @@ public class FormatterPreferences {
 	}
 	
 	public void formatCSS(boolean heckYes) {
-		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_FORMAT_JS, Boolean.toString(heckYes));
+		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_FORMAT_CSS, Boolean.toString(heckYes));
+	}
+	
+	public boolean formatCFScript() {
+		return Boolean.parseBoolean(fPrefs.getProperty(FormatterPreferenceConstants.FORMATTER_FORMAT_CFSCRIPT,
+				defaults.FORMATTER_FORMAT_CFSCRIPT));
+	}
+	
+	public void formatCFScript(boolean heckYes) {
+		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_FORMAT_CFSCRIPT, Boolean.toString(heckYes));
 	}
 	
 	// public static boolean affectsFormatting(PropertyChangeEvent event) {

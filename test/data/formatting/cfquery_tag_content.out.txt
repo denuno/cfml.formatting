@@ -1,0 +1,149 @@
+<cfquery name="iLoveCheese" datasource="youdotoo">
+    SELECT
+        i.obj#,
+        i.ts#,
+        i.file#,
+        i.block#,
+        i.intcols,
+        i.type#,
+        i.flags,
+        i.property,
+        i.pctfree$,
+        i.initrans,
+        i.maxtrans,
+        i.blevel,
+        i.leafcnt,
+        i.distkey,
+        i.lblkkey,
+        i.dblkkey,
+        i.clufac,
+        i.cols,
+        i.analyzetime,
+        i.samplesize,
+        i.dataobj#,
+        NVL(i.degree,
+        1),
+        NVL(i.instances,
+        1),
+        i.rowcnt,
+        MOD(i.pctthres$,
+        256),
+        i.indmethod#,
+        i.trunccnt,
+        n vl(c.unicols,
+        0),
+        NVL(c.deferrable#+c.valid#,
+        0),
+        NVL( i.spare1,
+        i.intcols),
+        i.spare4,
+        i.spare2,
+        i.spare6,
+        dec ode(i.pctthres$,
+        null,
+        null,
+        MOD(TRUNC(i.pctthres$/25 6),
+        256)),
+        ist.cachedblk,
+        ist.cachehit,
+        ist.logicalrea d 
+    FROM
+        ind$ i,
+        ind_stats$ ist,
+        (SELECT
+            enabled,
+            MIN(cols) unicols,
+            MIN(to_number(bitand(defer,
+            1))) deferrable#,
+            MIN(to_number(bitand(defer,
+            4)))  valid# 
+        FROM
+            cdef$ 
+        WHERE
+            obj#=:1 
+            AND enabled > 1 
+        GROUP BY
+            enabled) c 
+    WHERE
+        i.obj#=c.enabled(+)  
+        AND i.obj# = i st.obj#(+) 
+        AND i.bo#=:1 
+    ORDER BY
+        i.obj# 
+</cfquery> <cfmail action="fart">
+blasdfha
+asdlfkjasdf
+</cfmail>
+ <cfquery name="iLoveCheese" datasource="youdotoo">
+    SELECT
+        i.obj#,
+        i.ts#,
+        i.file#,
+        i.block#,
+        i.intcols,
+        i.type#,
+        i.flags,
+        i.property,
+        i.pctfree$,
+        i.initrans,
+        i.maxtrans,
+        i.blevel,
+        i.leafcnt,
+        i.distkey,
+        i.lblkkey,
+        i.dblkkey,
+        i.clufac,
+        i.cols,
+        i.analyzetime,
+        i.samplesize,
+        i.dataobj#,
+        NVL(i.degree,
+        1),
+        NVL(i.instances,
+        1),
+        i.rowcnt,
+        MOD(i.pctthres$,
+        256),
+        i.indmethod#,
+        i.trunccnt,
+        n vl(c.unicols,
+        0),
+        NVL(c.deferrable#+c.valid#,
+        0),
+        NVL( i.spare1,
+        i.intcols),
+        i.spare4,
+        i.spare2,
+        i.spare6,
+        dec ode(i.pctthres$,
+        null,
+        null,
+        MOD(TRUNC(i.pctthres$/25 6),
+        256)),
+        ist.cachedblk,
+        ist.cachehit,
+        ist.logicalrea d 
+    FROM
+        ind$ i,
+        ind_stats$ ist,
+        (SELECT
+            enabled,
+            MIN(cols) unicols,
+            MIN(to_number(bitand(defer,
+            1))) deferrable#,
+            MIN(to_number(bitand(defer,
+            4))) valid# 
+        FROM
+            cdef$ 
+        WHERE
+            obj#=:1 
+            AND enabled > 1 
+        GROUP BY
+            enabled) c 
+    WHERE
+        i.obj#=c.enabled(+) 
+        AND i.obj# = i st.obj#(+) 
+        AND i.bo#=:1 
+    ORDER BY
+        i.obj#
+</cfquery> 
