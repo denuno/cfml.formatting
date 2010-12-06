@@ -20,5 +20,8 @@ public class FormatterPreferenceConstants {
 	public static final String FORMATTER_FORMAT_JS = "formatter_format_js";
 	public static final String FORMATTER_FORMAT_CSS = "formatter_format_css";
 	public static final String FORMATTER_FORMAT_CFSCRIPT = "formatter_format_cfscript";
+	public static final String FORMATTER_IGNORED_TAGS = "formatter_ignored_tags";
+	public static final String FORMATTER_CLOSE_TAG_LIST = "formatter_close_tag_list";
+	public static final String FORMATTER_DICTIONARY_DIR = "formatter_dictionary_dir";
 	
 }

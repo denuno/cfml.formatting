@@ -23,6 +23,9 @@ public class FormatterPreferences {
 		public static final String FORMATTER_FORMAT_JS = "false";
 		public static final String FORMATTER_FORMAT_CSS = "false";
 		public static final String FORMATTER_FORMAT_CFSCRIPT = "false";
+		public static final String FORMATTER_IGNORED_TAGS = "cfmail,cfquery,script,cfscript,cfsavecontent,cfcontent";
+		public static final String FORMATTER_CLOSE_TAG_LIST = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow,cfzip";
+		public static final String FORMATTER_DICTIONARY_DIR = "./dictionary";
 	}
 	
 	Properties fPrefs;
@@ -231,6 +234,31 @@ public class FormatterPreferences {
 		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_FORMAT_CFSCRIPT, Boolean.toString(heckYes));
 	}
 	
+	public void setIgnoredTags(String ignoredTags) {
+		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_IGNORED_TAGS, ignoredTags);
+	}
+	
+	public String getIgnoredTags() {
+		return fPrefs.getProperty(FormatterPreferenceConstants.FORMATTER_IGNORED_TAGS, defaults.FORMATTER_IGNORED_TAGS);
+	}
+	
+	public void setCloseTagsList(String ignoredTags) {
+		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_CLOSE_TAG_LIST, ignoredTags);
+	}
+	
+	public String getCloseTagsList() {
+		return fPrefs.getProperty(FormatterPreferenceConstants.FORMATTER_CLOSE_TAG_LIST,
+				defaults.FORMATTER_CLOSE_TAG_LIST);
+	}
+	
+	public void setDictionaryDir(String dictDir) {
+		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_DICTIONARY_DIR, dictDir);
+	}
+	
+	public String getDictionaryDir() {
+		return fPrefs.getProperty(FormatterPreferenceConstants.FORMATTER_DICTIONARY_DIR,
+				defaults.FORMATTER_DICTIONARY_DIR);
+	}
 	// public static boolean affectsFormatting(PropertyChangeEvent event) {
 	// String property = event.getProperty();
 	// return property.startsWith(FormatterPreferenceConstants.FORMATTER_ALIGN)

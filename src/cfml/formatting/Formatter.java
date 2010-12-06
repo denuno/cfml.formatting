@@ -29,10 +29,6 @@ import css.formatting.CssCompressor;
 public class Formatter {
 	
 	private static final String lineSeparator = System.getProperty("line.separator");
-	private static final String[] fCloseTagList = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow,cfzip"
-			.split(",");
-	private static final String[] fUnformatTagList = "cfmail,cfquery,script,cfscript,cfsavecontent,cfcontent"
-			.split(",");
 	// private static final String[] fNoCondenseTagList = "cfif,cffunction,cfcomponent,cfargument,cfscript".split(",");
 	private static final String[] fNoCondenseTagList = "cfif".split(",");
 	private static String fCurrentIndent;
@@ -74,6 +70,8 @@ public class Formatter {
 		boolean changeTagCaseUpper = prefs.changeTagCaseUpper();
 		boolean changeTagCaseLower = prefs.changeTagCaseLower();
 		int maxLineWidth = prefs.getMaximumLineWidth();
+		String[] ignoredTagList = prefs.getIgnoredTags().split(",");
+		String[] closeTagList = prefs.getCloseTagsList().split(",");
 		String currentIndent = prefs.getInitialIndent();
 		
 		// displaySegments(source.getAllElements(HTMLElementName.SCRIPT));
@@ -96,7 +94,7 @@ public class Formatter {
 		CFMLSource formattedSource = new CFMLSource(results);
 		StartTagType.setTagTypesIgnoringEnclosedMarkup(new TagType[] { CFMLTags.CFML_COMMENT });
 		if (prefs.getCloseTags()) {
-			results = closeTagTypes(fCloseTagList, results);
+			results = closeTagTypes(closeTagList, results);
 		}
 		if (changeTagCase) {
 			if (changeTagCaseLower) {
@@ -106,9 +104,9 @@ public class Formatter {
 			}
 		}
 		if (condenseTags) {
-			results = condenseTags(results, 80);
+			results = condenseTags(results, ignoredTagList, 80);
 		}
-		results = unformatTagTypes(fUnformatTagList, source, formattedSource);
+		results = unformatTagTypes(ignoredTagList, source, formattedSource);
 		if (fPrefs.formatSQL()) {
 			results = formatQueries(results);
 		}
@@ -267,7 +265,7 @@ public class Formatter {
 		return outputDocument.toString();
 	}
 	
-	private String condenseTags(String content, int maxLength) {
+	private String condenseTags(String content, String[] ignoredTags, int maxLength) {
 		Source source = new Source(content);
 		List<StartTag> allTags = source.getAllStartTags();
 		OutputDocument outputDocument = new OutputDocument(source);
@@ -277,7 +275,7 @@ public class Formatter {
 			currentLen = +(tagStart.getEnd() - tagStart.getBegin());
 			if (tagStart.getElement().getEndTag() != null
 					&& !Arrays.asList(fNoCondenseTagList).contains(tagStart.getName())
-					&& !Arrays.asList(fUnformatTagList).contains(tagStart.getName())) {
+					&& !Arrays.asList(ignoredTags).contains(tagStart.getName())) {
 				currentLen = +(tagStart.getElement().getEndTag().getBegin() - tagStart.getEnd());
 				if (currentLen < maxLength) {
 					outputDocument.replace(tagStart.getElement().getContent(), tagStart.getElement().getContent()
