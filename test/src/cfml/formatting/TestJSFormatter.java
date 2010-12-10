@@ -7,7 +7,7 @@ public class TestJSFormatter extends FormattingTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		FormatterPreferences prefs = new FormatterPreferences();
-		prefs.setFormatSQL(true);
+		prefs.formatJavaScript(true);
 		fFormatter = new Formatter(prefs);
 	}
 	

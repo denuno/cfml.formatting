@@ -23,5 +23,6 @@ public class FormatterPreferenceConstants {
 	public static final String FORMATTER_IGNORED_TAGS = "formatter_ignored_tags";
 	public static final String FORMATTER_CLOSE_TAG_LIST = "formatter_close_tag_list";
 	public static final String FORMATTER_DICTIONARY_DIR = "formatter_dictionary_dir";
+	public static final String FORMATTER_CF_DICTIONARY = "formatter_cf_dictionary";
 	
 }

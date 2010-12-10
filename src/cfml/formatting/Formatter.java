@@ -24,6 +24,7 @@ import sql.formatting.SQLFormatter;
 import cfml.formatting.preferences.FormatterPreferences;
 import cfml.parsing.CFMLSource;
 import cfml.parsing.cfmentat.tag.CFMLTags;
+import cfml.parsing.preferences.ParserPreferences;
 import css.formatting.CssCompressor;
 
 public class Formatter {
@@ -35,17 +36,21 @@ public class Formatter {
 	private static int MAX_LENGTH = 0;
 	private static int col;
 	FormatterPreferences fPrefs;
+	private ParserPreferences pPrefs;
 	LineTrimmer lineTrimmer = new LineTrimmer();
 	
 	public Formatter(FormatterPreferences prefs) {
 		fPrefs = prefs;
+		pPrefs = new ParserPreferences();
+		pPrefs.setDictionaryDir(fPrefs.getDictionaryDir());
+		pPrefs.setCFDictionary(fPrefs.getCFDictionary());
 	}
 	
 	public String format(String contents, FormatterPreferences prefs) {
 		String indentation = prefs.getCanonicalIndent();
 		String newLine = lineSeparator;
 		contents = contents.replaceAll("\\r?\\n", newLine);
-		CFMLSource source = new CFMLSource(contents);
+		CFMLSource source = new CFMLSource(contents, pPrefs);
 		// this won't do anything if collapse whitespace is on!
 		// source.ignoreWhenParsing(source.getAllElements(HTMLElementName.SCRIPT));
 		// source.ignoreWhenParsing(source.getAllElements(CFMLTagTypes.CFML_SAVECONTENT));
@@ -144,7 +149,7 @@ public class Formatter {
 	}
 	
 	private String formatCSS(String intext) {
-		CFMLSource source = new CFMLSource(intext);
+		CFMLSource source = new CFMLSource(intext, pPrefs);
 		List<StartTag> queries = source.getTagsByName("style");
 		OutputDocument outputDocument = source.getOutputDocument();
 		for (Iterator i = queries.iterator(); i.hasNext();) {
@@ -159,7 +164,7 @@ public class Formatter {
 	}
 	
 	private String formatCFScript(String jsText) {
-		CFMLSource source = new CFMLSource(jsText);
+		CFMLSource source = new CFMLSource(jsText, pPrefs);
 		List<StartTag> queries = source.getTagsByName("cfscript");
 		OutputDocument outputDocument = source.getOutputDocument();
 		for (Iterator i = queries.iterator(); i.hasNext();) {
@@ -174,7 +179,7 @@ public class Formatter {
 	}
 	
 	private String formatJavaScript(String jsText) {
-		CFMLSource source = new CFMLSource(jsText);
+		CFMLSource source = new CFMLSource(jsText, pPrefs);
 		List<StartTag> queries = source.getTagsByName("script");
 		OutputDocument outputDocument = source.getOutputDocument();
 		for (Iterator i = queries.iterator(); i.hasNext();) {
@@ -189,7 +194,7 @@ public class Formatter {
 	}
 	
 	private String formatQueries(String sqlText) {
-		CFMLSource source = new CFMLSource(sqlText);
+		CFMLSource source = new CFMLSource(sqlText, pPrefs);
 		List<StartTag> queries = source.getTagsByName("cfquery");
 		OutputDocument outputDocument = source.getOutputDocument();
 		for (Iterator i = queries.iterator(); i.hasNext();) {

@@ -25,7 +25,8 @@ public class FormatterPreferences {
 		public static final String FORMATTER_FORMAT_CFSCRIPT = "false";
 		public static final String FORMATTER_IGNORED_TAGS = "cfmail,cfquery,script,cfscript,cfsavecontent,cfcontent";
 		public static final String FORMATTER_CLOSE_TAG_LIST = "cfset,cfabort,cfargument,cfreturn,cfinput,cfimport,cfdump,cfthrow,cfzip";
-		public static final String FORMATTER_DICTIONARY_DIR = "./dictionary";
+		public static final String FORMATTER_DICTIONARY_DIR = "";
+		public static final String FORMATTER_CF_DICTIONARY = "ColdFusion9";
 	}
 	
 	Properties fPrefs;
@@ -259,6 +260,16 @@ public class FormatterPreferences {
 		return fPrefs.getProperty(FormatterPreferenceConstants.FORMATTER_DICTIONARY_DIR,
 				defaults.FORMATTER_DICTIONARY_DIR);
 	}
+	
+	public void setCFDictionary(String dict) {
+		fPrefs.setProperty(FormatterPreferenceConstants.FORMATTER_CF_DICTIONARY, dict);
+	}
+	
+	public String getCFDictionary() {
+		return fPrefs.getProperty(FormatterPreferenceConstants.FORMATTER_CF_DICTIONARY,
+				defaults.FORMATTER_CF_DICTIONARY);
+	}
+	
 	// public static boolean affectsFormatting(PropertyChangeEvent event) {
 	// String property = event.getProperty();
 	// return property.startsWith(FormatterPreferenceConstants.FORMATTER_ALIGN)

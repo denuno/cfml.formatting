@@ -1,4 +1,5 @@
-<script language="javascript">/*   paste in your code and press Beautify button   */
+<script language="javascript">
+/*   paste in your code and press Beautify button   */
 if ('this_is' == /an_example/) {
     do_something();
 } else {
