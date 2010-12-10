@@ -1,0 +1,7 @@
+<cfscript>
+component persistent = "true" table = "eu_rooms" {
+    property name = "RoomId" fieldtype = "id" type = "numeric" generator = "increment";
+    property name = "building" type = "text";
+    property name = "room" type = "text";
+}
+</cfscript> 
